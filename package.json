@@ -24,6 +24,7 @@
     "@aws-sdk/client-dynamodb": "^3.100.0",
     "@aws-sdk/lib-dynamodb": "^3.100.0",
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.1.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "aws-sdk": "^2.1148.0",
