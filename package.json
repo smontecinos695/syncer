@@ -15,7 +15,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-    "nest-cli": "nest start -c cli.json \"$@\"",
+    "nest-cli": "nest start -c cli.json",
     "migration": "nest start -c cli.json -- migrate up",
     "rollback": "nest start -c cli.json -- migrate down",
     "test:watch": "jest --watch",
