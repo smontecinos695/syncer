@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DefaultMapper } from 'src/core/mapper/default-mapper.service';
-import pokemonSchema from '../schemas/pokemon';
+import { ReflectionMapper } from 'src/core/mapper/reflection-mapper';
+import { Pokemon } from 'src/pokemon/models/pokemon';
 
 @Injectable()
-export class PokemonMapperService extends DefaultMapper {
+export class PokemonMapperService extends ReflectionMapper<Pokemon> {
   static readonly POKE_API = 'https://pokeapi.co/api/v2/';
   constructor() {
-    super({ schema: pokemonSchema });
+    super(Pokemon);
   }
 
   public mapUrl(val: string) {

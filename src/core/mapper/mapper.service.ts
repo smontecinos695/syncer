@@ -3,8 +3,8 @@ export type MapperSchema = ObjectSchema | ArraySchema | PropertySchema;
 /**
  * it has to have an empty constructor
  */
-export interface Class extends Function {
-  new (): any;
+export interface Class<T = any> extends Function {
+  new (): T;
 }
 
 export interface ObjectSchema {
@@ -12,10 +12,13 @@ export interface ObjectSchema {
     [x: string]: MapperSchema;
   };
   type?: Class;
+  name?: string;
 }
 
 export interface ArraySchema {
   items: MapperSchema;
+  type?: Class;
+  name?: string;
 }
 
 export interface PropertySchema {
@@ -23,6 +26,7 @@ export interface PropertySchema {
   title?: string;
   type: string;
   format?: string;
+  name?: string;
 }
 
 export interface MapperConfig {
@@ -69,8 +73,9 @@ export abstract class MapperService {
     const result = this.instance<T>(schema.type);
     // go through each property and map it
     for (const property in schema.properties) {
+      const propertyName = schema.name || property;
       const propertySchema = schema.properties[property];
-      const propertyValue = obj[property];
+      const propertyValue = obj[propertyName];
       result[property] = this.mapSchema(propertyValue, propertySchema);
     }
     return result;

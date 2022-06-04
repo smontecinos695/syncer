@@ -1,4 +1,9 @@
 import {
+  DynamoDBClient,
+  ScanCommand,
+  TransactGetItemsCommand,
+} from '@aws-sdk/client-dynamodb';
+import {
   BatchWriteCommand,
   DynamoDBDocumentClient,
 } from '@aws-sdk/lib-dynamodb';
@@ -8,6 +13,8 @@ import { DynamoDBTokens } from 'src/core/tokens';
 @Injectable()
 export class PokemonRepositoryService {
   constructor(
+    @Inject(DynamoDBTokens.DYNAMO_DB_CLIENT)
+    private ddbClient: DynamoDBClient,
     @Inject(DynamoDBTokens.DYNAMO_DB_DOCUMENT_CLIENT)
     private docClient: DynamoDBDocumentClient,
   ) {}
@@ -30,5 +37,15 @@ export class PokemonRepositoryService {
         Item: d,
       },
     };
+  }
+
+  public getPokemons(offset: number, limit: number) {
+    const inputs = {
+      TableName: 'pokemons', // give it your table name
+      Select: 'ALL_ATTRIBUTES',
+    };
+
+    const scanCommand = new ScanCommand(inputs);
+    return this.docClient.send(scanCommand);
   }
 }

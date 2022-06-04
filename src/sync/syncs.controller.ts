@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { mergeMap } from 'rxjs';
+import { mergeMap, take } from 'rxjs';
 import { PokemonApiRepositoryService } from './pokemon-api-repository/pokemon-api-repository.service';
-import { PokemonRepositoryService } from './pokemon-repository/pokemon-repository.service';
+import { PokemonRepositoryService } from '../pokemon/pokemon-repository/pokemon-repository.service';
 import { batch } from './rxjs/operators/batch';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,9 +21,6 @@ export class SyncsController {
     concurrency =
       typeof concurrency === 'number' ? concurrency : parseInt(concurrency);
     const sync = uuidv4();
-    return this.api.getPokemons({ concurrency }).pipe(
-      batch(size),
-      mergeMap((batch) => this.repository.bulkUpsert(batch, sync)),
-    );
+    return this.api.getPokemons({ concurrency }).pipe(batch(size), take(1));
   }
 }
