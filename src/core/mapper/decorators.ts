@@ -4,6 +4,11 @@ export type AttributeOptions<T> = {
   name?: string;
   items?: T;
   format?: string;
+  type?: any;
+};
+
+export type AttributeOptionsMap<T = any> = {
+  [x: string]: AttributeOptions<T>;
 };
 
 export function Attribute<T>(options?: AttributeOptions<T>): PropertyDecorator {

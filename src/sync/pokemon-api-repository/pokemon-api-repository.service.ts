@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { PokemonMapperService } from '../pokemon-mapper/pokemon-mapper.service';
 import { from, map, mergeMap, Observable, take } from 'rxjs';
+import { Pokemon } from 'src/pokemon/models/pokemon';
 
 export interface PaginatedResult<T> {
   next?: string;
@@ -29,7 +30,7 @@ export class PokemonApiRepositoryService {
     private pokemonMapper: PokemonMapperService,
   ) {}
 
-  public getPokemons(options: Options = {}): Observable<any> {
+  public getPokemons(options: Options = {}): Observable<Pokemon> {
     const { count, concurrency = 5 } = options;
     const result = this.getEndpointsList().pipe(
       mergeMap((url) => this.getPokemon(url), concurrency),
@@ -42,7 +43,7 @@ export class PokemonApiRepositoryService {
     return result;
   }
 
-  public getPokemon(url: string) {
+  public getPokemon(url: string): Observable<Pokemon> {
     return this.http
       .get(url)
       .pipe(map((response) => this.pokemonMapper.map(response.data)));

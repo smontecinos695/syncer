@@ -21,6 +21,12 @@ export class SyncsController {
     concurrency =
       typeof concurrency === 'number' ? concurrency : parseInt(concurrency);
     const sync = uuidv4();
-    return this.api.getPokemons({ concurrency }).pipe(batch(size), take(1));
+    return this.api.getPokemons({ concurrency }).pipe(
+      batch(size),
+      mergeMap(
+        (pokemons) => this.repository.bulkUpsert(pokemons, sync),
+        concurrency,
+      ),
+    );
   }
 }
