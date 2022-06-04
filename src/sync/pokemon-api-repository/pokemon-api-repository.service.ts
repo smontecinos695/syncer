@@ -47,6 +47,7 @@ export class PokemonApiRepositoryService {
       .get(url)
       .pipe(map((response) => this.pokemonMapper.map(response.data)));
   }
+
   /**
    * This function acts as a producer for requests urls.
    * It emits once per url in the response body

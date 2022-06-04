@@ -1,13 +1,23 @@
 import { Controller, Get } from '@nestjs/common';
-import { take } from 'rxjs';
+import { mergeMap } from 'rxjs';
 import { PokemonApiRepositoryService } from './pokemon-api-repository/pokemon-api-repository.service';
+import { PokemonRepositoryService } from './pokemon-repository/pokemon-repository.service';
+import { batch } from './rxjs/operators/batch';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller('syncs')
 export class SyncsController {
-  public constructor(private repository: PokemonApiRepositoryService) {}
+  public constructor(
+    private api: PokemonApiRepositoryService,
+    private repository: PokemonRepositoryService,
+  ) {}
 
   @Get()
   public getPokemons() {
-    return this.repository.getPokemons().pipe(take(10));
+    const sync = uuidv4();
+    return this.api.getPokemons().pipe(
+      batch(25),
+      mergeMap((batch) => this.repository.bulkUpsert(batch, sync)),
+    );
   }
 }

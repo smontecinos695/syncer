@@ -1,6 +1,10 @@
-import { defer, Observable } from 'rxjs';
+import { defer, Observable, pipe, scan } from 'rxjs';
 
 export function batch<T>(size: number) {
+  if (size <= 0) {
+    return pipe(scan<T, T[]>((acc, v) => (acc.push(v), acc), [] as T[]));
+  }
+
   return (observable: Observable<T>) => {
     return defer(() => {
       let arr: T[] = [];

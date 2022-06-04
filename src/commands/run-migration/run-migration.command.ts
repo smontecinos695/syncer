@@ -39,8 +39,11 @@ export class RunMigrationCommand implements ICommand {
   }
 
   public get migrationsDir(): string {
-    const appDir = path.dirname(path.dirname(require.main.filename));
-    return path.join(appDir, 'migrations');
+    let base = path.dirname(require.main.filename);
+    while (!fs.existsSync(path.join(base, 'package.json'))) {
+      base = path.dirname(base);
+    }
+    return path.join(base, 'migrations');
   }
 
   run(app: INestApplication, args: string[]) {
