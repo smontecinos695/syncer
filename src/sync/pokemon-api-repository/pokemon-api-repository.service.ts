@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { PokemonMapperService } from '../pokemon-mapper/pokemon-mapper.service';
-import { from, map, mergeMap, Observable, take } from 'rxjs';
+import { flatMap, from, map, mergeMap, Observable, take } from 'rxjs';
 import { Pokemon } from 'src/pokemon/models/pokemon';
 
 export interface PaginatedResult<T> {
@@ -44,9 +44,7 @@ export class PokemonApiRepositoryService {
   }
 
   public getPokemon(url: string): Observable<Pokemon> {
-    return this.http
-      .get(url)
-      .pipe(map((response) => this.pokemonMapper.map(response.data)));
+    return this.http.get(url).pipe(map((response) => response.data));
   }
 
   /**

@@ -1,8 +1,4 @@
-import {
-  DynamoDBClient,
-  ScanCommand,
-  TransactGetItemsCommand,
-} from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 import {
   BatchWriteCommand,
   DynamoDBDocumentClient,

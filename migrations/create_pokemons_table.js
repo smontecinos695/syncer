@@ -20,24 +20,16 @@ function up(ddbClient) {
         AttributeName: 'id',
         AttributeType: 'N',
       },
-      {
-        AttributeName: 'sync',
-        AttributeType: 'S',
-      },
     ],
     KeySchema: [
       {
         AttributeName: 'id',
         KeyType: 'HASH',
       },
-      {
-        AttributeName: 'sync',
-        KeyType: 'RANGE',
-      },
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 1,
-      WriteCapacityUnits: 1,
+      WriteCapacityUnits: 10000,
     },
     StreamSpecification: {
       StreamEnabled: false,
