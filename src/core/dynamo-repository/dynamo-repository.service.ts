@@ -23,11 +23,14 @@ export abstract class DynamoRepositoryService<T> {
   protected abstract getResourceName(): string;
 
   public async getAll(limit: number, offset?: number) {
-    const inputs: ScanCommandInput = this.getScanCommandInput();
+    const inputs: ScanCommandInput = {
+      ...this.getScanCommandInput(),
+      Limit: limit,
+    };
 
     if (offset) {
       inputs.ExclusiveStartKey = {
-        id: offset,
+        id: { N: `${offset}` },
       };
     }
 
