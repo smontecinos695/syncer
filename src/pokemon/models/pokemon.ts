@@ -11,6 +11,8 @@ import { PokemonStat } from './pokemon-stat';
 import { PokemonType } from './pokemon-type';
 
 export class Pokemon {
+  static readonly RESOURCE = `pokemon`;
+
   @Attribute()
   id: number;
 

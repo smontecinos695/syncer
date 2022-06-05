@@ -37,15 +37,13 @@ export class ReflectionMapper<T> {
   }
 
   public mapSchema(obj: any, options: AttributeOptions<any>) {
-    if (obj === null) {
-      return null;
-    } else if (void 0 === obj) {
+    if (obj === null || undefined === obj) {
       return obj;
     }
 
     if (this.hasMapper(options)) {
       const mapper = this.getMapper(options);
-      return mapper(obj);
+      return mapper.call(this, obj, options);
     }
 
     // manually detect and cast schema as there's
@@ -76,7 +74,7 @@ export class ReflectionMapper<T> {
     return result;
   }
 
-  // mappers must conform this method signature (any, T extends MapperSchema) => any
+  // mappers must conform this method signature (any, T extends AttributeOptions<any>) => any
   // disable warning for this case
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public mapProperty(val: any, options: AttributeOptions<any>) {
@@ -85,7 +83,8 @@ export class ReflectionMapper<T> {
 
   public mapArray(obj: any, schema: AttributeOptions<any>) {
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.mapObject(item, schema.items));
+      const options = { type: schema.items };
+      return obj.map((item) => this.mapSchema(item, options));
     }
     return obj;
   }
@@ -131,11 +130,6 @@ export class ReflectionMapper<T> {
       schemaName.charAt(0).toUpperCase() + schemaName.substring(1);
     const methodName = `map${ucSchemaName}`;
     const method = this[methodName];
-    if (method == undefined) {
-      return method;
-    }
-    return (val) => {
-      return method.call(this, val, schema);
-    };
+    return method;
   }
 }

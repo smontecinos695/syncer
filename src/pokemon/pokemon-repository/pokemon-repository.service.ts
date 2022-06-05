@@ -1,47 +1,20 @@
-import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
-import {
-  BatchWriteCommand,
-  DynamoDBDocumentClient,
-} from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { Inject, Injectable } from '@nestjs/common';
+import { DynamoRepositoryService } from 'src/core/dynamo-repository/dynamo-repository.service';
+import { DynamodbMapperService } from 'src/core/dynamodb-mapper/dynamodb-mapper.service';
 import { DynamoDBTokens } from 'src/core/tokens';
+import { Pokemon } from '../models/pokemon';
 
 @Injectable()
-export class PokemonRepositoryService {
+export class PokemonRepositoryService extends DynamoRepositoryService<Pokemon> {
+  public getResourceName(): string {
+    return `pokemons`;
+  }
+
   constructor(
-    @Inject(DynamoDBTokens.DYNAMO_DB_CLIENT)
-    private ddbClient: DynamoDBClient,
     @Inject(DynamoDBTokens.DYNAMO_DB_DOCUMENT_CLIENT)
-    private docClient: DynamoDBDocumentClient,
-  ) {}
-
-  public bulkUpsert<T>(docs: T[], sync: string) {
-    const command = new BatchWriteCommand({
-      RequestItems: {
-        pokemons: docs
-          .map((d) => ({ ...d, sync }))
-          .map(this.convertToWriteStatement),
-      },
-    });
-
-    return this.docClient.send(command);
-  }
-
-  public convertToWriteStatement<T>(d: T) {
-    return {
-      PutRequest: {
-        Item: d,
-      },
-    };
-  }
-
-  public getPokemons(offset: number, limit: number) {
-    const inputs = {
-      TableName: 'pokemons', // give it your table name
-      Select: 'ALL_ATTRIBUTES',
-    };
-
-    const scanCommand = new ScanCommand(inputs);
-    return this.docClient.send(scanCommand);
+    docClient: DynamoDBDocumentClient,
+  ) {
+    super(docClient, new DynamodbMapperService(Pokemon));
   }
 }
