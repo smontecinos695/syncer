@@ -4,7 +4,7 @@ import { PokemonApiRepositoryService } from './pokemon-api-repository/pokemon-ap
 import { PokemonRepositoryService } from '../pokemon/pokemon-repository/pokemon-repository.service';
 import { v4 as uuidv4 } from 'uuid';
 
-@Controller('syncs')
+@Controller('sync')
 export class SyncsController {
   public constructor(
     private api: PokemonApiRepositoryService,
